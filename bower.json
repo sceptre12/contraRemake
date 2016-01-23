@@ -1,0 +1,19 @@
+{
+  "name": "contraremake",
+  "description": "",
+  "main": "server.js",
+  "authors": [
+    "xavier/joannier"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/sceptre12/contraRemake",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

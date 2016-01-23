@@ -1,0 +1,22 @@
+{
+  "name": "contraremake",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sceptre12/contraRemake.git"
+  },
+  "author": "xavier/joannier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sceptre12/contraRemake/issues"
+  },
+  "homepage": "https://github.com/sceptre12/contraRemake#readme",
+  "dependencies": {
+    "phaser": "^2.4.4"
+  }
+}
