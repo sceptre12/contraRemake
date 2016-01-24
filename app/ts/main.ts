@@ -14,6 +14,7 @@ module ContraRemake {
       private preload(){
         // Graphics
         this.game.load.image('sky','app/assets/sky.png');
+        this.game.load.image('btn','app/assets/btn.png');
 
         // Spritesheet
         this.game.load.spritesheet('dude','app/assets/dude.png', 32,48);
