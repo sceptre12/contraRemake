@@ -16,12 +16,15 @@ module GameStates {
     create(){
       this.game.add.sprite(0,0,'sky');
       // Welcome Text to start the game
-      this.game.add.text(16, 16, 'Welcome to ContraRemake', { fontSize: '32px', fill: '#000' });
+      var textX = this.game.width/2 - 200;
+      var textY = this.game.height/2 - 300;
+      this.game.add.text(textX, textY, 'Welcome to ContraRemake', { fontSize: '32px', fill: '#000' });
+
       // start button for the game
-      var decrease = 200;
-      var width = this.game.width/2 - decrease;
-      var height = this.game.height/2 - decrease ;
-      this.game.add.button(height,width, 'btn', this.startGame);
+      var bDecrease = 100;
+      var bWidth = this.game.width/2 - bDecrease;
+      var bHeight = this.game.height/2 - bDecrease ;
+      this.game.add.button(bHeight,bWidth, 'btn', this.startGame);
     }
 
     private startGame(): void{
