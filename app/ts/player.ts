@@ -16,6 +16,7 @@ module Player{
 		private game: Phaser.Game;
 		private weapons: Weapons.weapon; 
 		private lifes: number;
+		private player: Phaser.Sprite;
 		private playerState: PlayerState;
 		private RIGHT_ARROW: Phaser.key;
 		private LEFT_ARROW: Phaser.key;
@@ -23,20 +24,15 @@ module Player{
 		private walkingSpeed: number;
 		public static MAX_SPEED = 50;
 		
-		construct(game: Phaser.game){
+		construct(game: Phaser.game, x: number, y: number, frameName: string, config: playerConfig){
 			this.game = game;
 			this.weapons = new Weapons.weapon();
-			super(this.game,x,y,frameName);
-
-
-		}
-
-		setUpPlayer(x: number, y: number, frameName: string, config: playerConfig ): void{
-			this.player = this.game.add.sprite(x,y,frameName); 
+			this.player = add.sprite(x,y,frameName); 
 			this.game.physics.arcade.enable(this.player);
+			
 			this.player.body.gravity = config.gravity;
-			this.player.body.collideWorldBounds = config.worldBounds;		
-		}
+			this.player.body.collideWorldBounds = config.worldBounds;
+	}
 
 		moveRight(config: playerConfig): void{
 			this.player.body.velocity.x = config.rightAxis;
