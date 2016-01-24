@@ -6,14 +6,14 @@ module ContraRemake {
   export class startGame{
       game: Phaser.Game;
       constructor(){
-        this.game = new Phaser.Game(800,window.innerHeight, Phaser.AUTO,'#gameArea',{
+        this.game = new Phaser.Game(window.innerWidth,428, Phaser.AUTO,'#gameArea',{
           create: this.create, preload: this.preload
         });
       };
 
       private preload(){
         // Graphics
-        this.game.load.image('sky','app/assets/sky.png');
+        this.game.load.image('background','app/assets/background.png');
         this.game.load.image('btn','app/assets/btn.png');
         this.game.load.image('platform','app/assets/platform.png');
         // Spritesheet
@@ -23,9 +23,10 @@ module ContraRemake {
       private create(){
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.state.add("TitleScreenState", GameStates.TitleScreenState, true);
+        this.game.state.add("GamePlayStart", GameStates.GamePlayStart, false);
       }
       private update(){
-        
+
       }
   };
 };
