@@ -21,16 +21,32 @@ export abstract class weaponsList {
       damage: 8,
       type: "C"
     }
+
   }
 
   export class weapons {
     private currentWeapon: any;
+    private secondWeapon: any;
+    private defaultWeapon: any;
 
     construct(weapon: any, defaultWeapon: weaponsList) {
+      this.defaultWeapon = weaponsList.machineGun;
       this.currentWeapon = weaponsList.machineGun;
+      this.secondWeapon = null;
     }
 
-    setCurrentWeapon(weapon: any) {
+    setCurrentWeapon(weapon: any, weaponOption:number) {
+     switch (weaponOption) {
+       case 1:
+         this.currentWeapon = weapon; 
+         break;
+       case 2:
+         this.currentWeapon = weapon;
+          break;
+       default:
+         // code...
+         break;
+     }
       this.currentWeapon = weapon;
     }
     getCurrentWeapon(): weapons {

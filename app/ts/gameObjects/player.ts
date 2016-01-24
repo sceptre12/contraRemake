@@ -15,61 +15,86 @@ module Player {
     IDLE, WALKING
   }
 
-  export class playerOne extends Phaser.Sprite {
+  export class playerOne  {
     private damaged: boolean;
     public game: Phaser.Game;
     private weapons: Weapons.weapons;
     private lifes: number;
     private player: Phaser.Sprite;
     private playerState: PlayerState;
-    private RIGHT_ARROW: Phaser.Key;
-    private LEFT_ARROW: Phaser.Key;
+    private cursors: any; 
+    private keyboardKeys: any;  
     private Escape: Phaser.Key;
-    private walkingSpeed: number;
-    public static MAX_SPEED = 50;
+    private currentWeapon:boolean;
+    
 
-    construct(game: Phaser.Game, x: number, y: number, frameName: string, config: playerConfig) {
+    construct(game: Phaser.Game, config: playerConfig) {
       this.game = game;
-      this.player = this.game.add.sprite(x, y, frameName);
+      this.player = this.game.add.sprite(50, this.game.world.height, 'player');
       this.game.physics.arcade.enable(this.player);
-
+      this.cursors = this.game.input.keyboard.createCursorKeys();
+      this.keyboardKeys = this.game.input.keyboard.addKeys({'sWeapon':Phaser.KeyCode.X, 'fire': Phaser.KeyCode.C})
       this.player.body.gravity = playerConfig.gravity;
       this.player.body.collideWorldBounds = playerConfig.worldBounds;
+      this.currentWeapon = true;
+      //this.player.anchor.set(0.5,1.0);
     }
 
-    moveRight(config: playerConfig): void {
+    updateMovement(): void {    
+       if (this.cursors.left.isDown){
+        this.moveLeft();
+       }
+      else if (this.cursors.right.isDown){
+        this.moveDown();
+       }
+      else{
+         this.standStill();
+       }
+      if (this.cursors.up.isDown && this.player.body.touching.down){
+        this.moveDown();
+      }
+      if(this.keyboardKeys.sWeapon.isDown){
+          currentWeapon = !currentWeapon;
+      }
+      if(this.keyboardKeys.fire.isDown){
+        this.shoot();
+      }
+    }
+
+    private moveRight(config: playerConfig): void {
       this.player.body.velocity.x = playerConfig.rightAxis;
       this.player.animations.play('right');
     }
 
-
-
-    standStill() {
+    private standStill() {
       this.player.animations.stop();
       // this.player.frame = (pending frame);
     }
 
-    moveLeft(config: playerConfig): void {
+    private moveLeft(config: playerConfig): void {
       this.player.body.velocity.x = playerConfig.leftAxis;
       this.player.animations.play('left');
     }
 
-    jump(config: playerConfig): void {
+    private jump(config: playerConfig): void {
       this.player.body.velocity.y = playerConfig.yAxis;
     }
 
-    shoot(): void {
+    private shoot(): void {
 
     }
 
-    setWeapon(weapon: any): void {
-      this.weapons.setCurrentWeapon(weapon);
+    setWeapons(weapon: any, weaponOption: number): void {
+      this.weapons.setCurrentWeapon(weapon, weaponOption);
     }
 
-    getWeapon(): Weapons.weapons {
+    getCurrentWeapon(): Weapons.weapons {
       return this.weapons.getCurrentWeapon();
     }
-
+    getSecondWeapon(): Weapons.weapons {
+      return this.weapons.getSecondWeapon()
+    }
+    //initiates player.
     addAnimations(direction: string, frames: number[], speed: number, loop: boolean) {
       this.player.animations.add(direction, frames, speed, loop);
     }
