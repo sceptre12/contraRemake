@@ -13,9 +13,7 @@ module GameStates {
     preload(){
 
     }
-    create(){
-      var background = this.game.add.sprite(0,0,'background');
-      background.width = this.game.width;
+    create(){      
       this.bgTile = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
 
       var platforms = this.game.add.group();
