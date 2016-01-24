@@ -3,68 +3,119 @@
 /// <reference path="../gameObjects/player.ts"/>
 
 module GameStates {
-  export class GamePlayStart extends Phaser.State{
+  export class GamePlayStart extends Phaser.State {
     game: Phaser.Game;
     playerSprite: Phaser.Sprite;
     playerClass: Player.playerFactory;
     private bgTile: Phaser.TileSprite;
-    private platFormTile: Phaser.TileSprite;
     private platforms: Phaser.Group;
+    private landingPlats: Phaser.Group;
+    private ground: Phaser.TileSprite;
+    private stopped: boolean = false;
 
-    constructor(){
+    constructor() {
       super();
     }
 
-    preload(){
+    preload() {
       // loading images
-      this.game.load.image('platform','app/assets/platform.png');
+      this.game.load.image('platform', 'app/assets/platform.png');
 
       // Spritesheet
-      this.game.load.spritesheet('dude','app/assets/dude.png', 32,48);
+      this.game.load.spritesheet('dude', 'app/assets/dude.png', 32, 48);
     }
-    update(){
-      this.game.physics.arcade.collide(this.playerSprite, this.platforms);
+    update() {
+      var cursor = this.playerClass.cursors;
 
-      this.bgTile.tilePosition.x -= 1;
-      this.platFormTile.tilePosition.x -=1;
+      // detects and execute collision functions
+      this.game.physics.arcade.collide(this.playerSprite, this.ground);
+      this.game.physics.arcade.collide(this.playerSprite, this.landingPlats);
+
 
       this.playerClass.movement(this.playerSprite);
+
+      if (cursor.right.isDown) {
+        this.bgTile.tilePosition.x -= 1;
+      }
+
+      if (!this.stopped && this.playerSprite.x < this.game.width) {
+        this.stopped = true;
+        if (cursor.right.isDown) {
+          this.landingPlats.forEachExists(function(landPlat) {
+            landPlat.body.velocity.x = -150;
+          }, this);
+        }
+      } else {
+        this.stopped = false;
+        this.landingPlats.forEachExists(function(landPlat) {
+          landPlat.body.velocity.x = 0;
+        }, this);
+      }
+
+      var count = 0;
+      if (!this.stopped && this.playerSprite.x > this.game.width / 2) {
+        if (cursor.right.justDown) {
+              var curr = this;
+              var platform = this.generatePlatforms(this.game, this.playerSprite);
+
+              platform.forEachExists(function(landPlat) {
+                landPlat.body.velocity.x = -150;
+              }, this);
+        }
+      }
+
     }
-    create(){
+    create() {
 
       //  We're going to be using physics, so enable the Arcade Physics system
       this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
       this.bgTile = <Phaser.TileSprite>this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
 
-
-
-      this.platforms = <Phaser.Group>this.game.add.group();
-
-      // allows all existing and new sprites to have physics body enabled
-      this.platforms.enableBody = true;
-
       //creates ground
-      var ground = <Phaser.Sprite>this.platforms.create(0,this.game.world.height -34, 'platform');
+      this.ground = <Phaser.TileSprite>this.game.add.tileSprite(0, this.game.world.height - 34, this.game.width, this.game.height, 'platform');
 
-      //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-      ground.scale.setTo(4, 2);
+      this.game.physics.arcade.enable(this.ground);
+
       //  This stops it from falling away when you jump on it
-      ground.body.immovable = true;
+      this.ground.body.immovable = true;
 
-      this.platforms.create(this.game.width -200, 100, 'platform').body.immovable = true;
 
-      this.platforms.create(400, 250, 'platform').body.immovable = true;
+      this.landingPlats = <Phaser.Group>this.game.add.group();
 
-      this.platFormTile = <Phaser.TileSprite>this.game.add.tileSprite(0,0,400,250,'platform');
-      // this.platFormTile = <Phaser.TileSprite>this.game.add.tileSprite(0,0,-200,100,'platform');
+      this.landingPlats.enableBody = true;
 
+      this.landingPlats.create(this.game.width - 200, 100, 'platform').body.immovable = true;
+
+      this.landingPlats.create(400, 250, 'platform').body.immovable = true;
 
       this.playerClass = new Player.playerFactory(this.game);
+
       this.playerSprite = this.playerClass.player;
 
+      this.game.camera.follow(this.playerSprite);
     }
 
+    generatePlatforms(game: Phaser.Game, player: Phaser.Sprite): Phaser.Group {
+      var plat = <Phaser.Group>game.add.group();
+
+      //Enable phsyics on these groups
+      plat.enableBody = true;
+
+      var ranPlatNum = this.game.rnd.integerInRange(0, 2);
+      var platform: Phaser.Sprite;
+
+      for (var i = 0; i < ranPlatNum; i++) {
+        // add Sprite within an area excluding the beginning and ending
+        var x = game.rnd.integerInRange(game.width, game.world.width);
+        var y = game.rnd.integerInRange(game.height, game.world.height - game.height);
+        plat.create(x, y, 'platform').body.immovable = true;
+
+      }
+      game.physics.arcade.collide(player, plat);
+
+      return plat;
+    }
 
   }
 }
