@@ -12,7 +12,8 @@ module Player {
       this.game = game;
 
       // Initializes the player obj
-      this.player = this.game.add.sprite(52, game.world.height -80 , 'dude');
+      this.player = <Phaser.Sprite>this.game.add.sprite(52, this.game.height - 80, 'dude');
+
 
       // Adds the player object to the physics
       this.game.physics.arcade.enable(this.player);
@@ -21,7 +22,7 @@ module Player {
       this.player.body.bounce.y = 0.2;
       this.player.body.gravity.y = 300;
       this.player.body.collideWorldBounds = true;
-
+      this.player.body.setSize(20, 32, 5, 16);
 
       this.player.animations.add('left', [0, 1, 2, 3], 10, true);
       this.player.animations.add('right', [5, 6, 7, 8], 10, true);
@@ -49,7 +50,7 @@ module Player {
         this.player.frame = 4;
       }
       //  Allow the player to jump if they are touching the ground.
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
+      if (this.cursors.up.isDown && this.player.body.onFloor()) {
         this.player.body.velocity.y = -350;
       }
     }
