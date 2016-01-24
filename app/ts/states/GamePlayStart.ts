@@ -1,10 +1,14 @@
 /// <reference path="../../libs/jquery.d.ts"/>
 /// <reference path="../../../node_modules/phaser/typescript/phaser.d.ts"/>
+/// <reference path="../gameObjects/player.ts"/>
 
 module GameStates {
   export class GamePlayStart extends Phaser.State{
     game: Phaser.Game;
+    player: Player.playerOne;
+
     private bgTile;
+    private plat
 
     constructor(){
       super();
@@ -13,7 +17,7 @@ module GameStates {
     preload(){
 
     }
-    create(){      
+    create(){
       this.bgTile = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
 
       var platforms = this.game.add.group();
@@ -35,9 +39,15 @@ module GameStates {
       ledge = platforms.create(400, 250, 'platform');
       // ledge.scale.setTo(2,2);
       ledge.body.immovable = true;
+
+      this.player = new Player.playerOne(this.game);
+      this.player.addAnimations('left', [0, 1, 2, 3], 10, true);
+      this.player.addAnimations('right', [5, 6, 7, 8], 10, true);
     }
     update(){
       this.bgTile.tilePosition.x -= 1;
+      this.player.updateMovement();
+
     }
 
   }

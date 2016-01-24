@@ -3,11 +3,11 @@
 /// <reference path="./weapons.ts"/>
 
 module Player {
-  abstract class playerConfig {
+  abstract class playerConfig{
     public static gravity: number = 500;
     public static worldBounds: boolean = true;
-    public static leftAxis: number = -50;
-    public static rightAxis: number = 50;
+    public static leftAxis: number = -250;
+    public static rightAxis: number =250;
     public static yAxis: number = -100;
   }
 
@@ -20,58 +20,91 @@ module Player {
     public game: Phaser.Game;
     private weapons: Weapons.weapons;
     private lifes: number;
-    private player: Phaser.Sprite;
+    private player: any;
     private playerState: PlayerState;
-    private cursors: any; 
-    private keyboardKeys: any;  
+    private cursors: any;
+    private keyboardKeys: any;
     private Escape: Phaser.Key;
-    private currentWeapon:boolean;
-    
+    private weaponSelection: boolean;
 
-    construct(game: Phaser.Game, config: playerConfig) {
+
+    constructor(game: Phaser.Game) {
+      // initalizes game
       this.game = game;
-      this.player = this.game.add.sprite(50, this.game.world.height, 'player');
+
+      this.player = this.game.add.sprite(32, this.game.world.height -100, 'dude');
+
+      // Enables physics properties on the object
       this.game.physics.arcade.enable(this.player);
-      this.cursors = this.game.input.keyboard.createCursorKeys();
-      this.keyboardKeys = this.game.input.keyboard.addKeys({'sWeapon':Phaser.KeyCode.X, 'fire': Phaser.KeyCode.C})
+
+      // Player physics properties. Give the little guy a slight bounce.
+      this.player.body.bounce.y = 0.2;
+
+      /*
+        Local gravity applied to this obj, if non zero overrides world gravity
+        unless body.allowGravity is set to false
+      */
       this.player.body.gravity = playerConfig.gravity;
+
+      /*
+        A Body can be set to collide against the World bounds automatically and
+        rebound back into the World if this is set to true. Otherwise it will leave the World.
+      */
       this.player.body.collideWorldBounds = playerConfig.worldBounds;
-      this.currentWeapon = true;
-      //this.player.anchor.set(0.5,1.0);
+
+      // returns an object containing up/down/left/right
+      this.cursors = this.game.input.keyboard.createCursorKeys();
+
+      // Creates hot keys for the game
+      this.keyboardKeys = this.game.input.keyboard.addKeys(
+        {
+          sWeapon: Phaser.Keyboard.X,
+          fire: Phaser.Keyboard.C
+        }
+      )
+      this.weaponSelection = true;
+
+      // this.player.anchor.set(0.5,1.0);
     }
 
-    updateMovement(): void {    
-       if (this.cursors.left.isDown){
+    updateMovement(): void {
+      this.player.body.velocity.x = 0;
+
+      if (this.cursors.left.isDown) {
         this.moveLeft();
-       }
-      else if (this.cursors.right.isDown){
-        this.moveDown();
-       }
-      else{
-         this.standStill();
-       }
-      if (this.cursors.up.isDown && this.player.body.touching.down){
-        this.moveDown();
       }
-      if(this.keyboardKeys.sWeapon.isDown){
-          currentWeapon = !currentWeapon;
+      else if (this.cursors.right.isDown) {
+        console.log(playerConfig.yAxis);
+        this.moveRight();
       }
-      if(this.keyboardKeys.fire.isDown){
-        this.shoot();
+      else {
+        this.standStill();
       }
+
+      if (this.cursors.up.isDown && this.player.body.touching.down) {
+        console.log(1,playerConfig.yAxis);
+        this.player.body.velocity.Y = playerConfig.yAxis;
+      }
+
+      // if (this.keyboardKeys.sWeapon.isDown) {
+      //   this.weaponSelection = !this.weaponSelection;
+      // }
+      // if (this.keyboardKeys.fire.isDown) {
+      //   this.shoot();
+      // }
     }
 
-    private moveRight(config: playerConfig): void {
+    private moveRight(): void {
       this.player.body.velocity.x = playerConfig.rightAxis;
       this.player.animations.play('right');
     }
 
     private standStill() {
       this.player.animations.stop();
-      // this.player.frame = (pending frame);
+      this.player.frame = 5;
     }
 
-    private moveLeft(config: playerConfig): void {
+    private moveLeft(): void {
       this.player.body.velocity.x = playerConfig.leftAxis;
       this.player.animations.play('left');
     }
@@ -91,9 +124,10 @@ module Player {
     getCurrentWeapon(): Weapons.weapons {
       return this.weapons.getCurrentWeapon();
     }
-    getSecondWeapon(): Weapons.weapons {
-      return this.weapons.getSecondWeapon()
-    }
+
+    // getSecondWeapon(): Weapons.weapons {
+    //   return this.weapons.getSecondWeapon()
+    // }
     //initiates player.
     addAnimations(direction: string, frames: number[], speed: number, loop: boolean) {
       this.player.animations.add(direction, frames, speed, loop);
