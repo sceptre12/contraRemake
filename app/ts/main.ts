@@ -15,10 +15,6 @@ module ContraRemake {
         // Graphics
         this.game.load.image('background','app/assets/background.png');
         this.game.load.image('btn','app/assets/btn.png');
-        this.game.load.image('platform','app/assets/platform.png');
-
-        // Spritesheet
-        this.game.load.spritesheet('dude','app/assets/dude.png', 32,48);
       }
 
       private create(){

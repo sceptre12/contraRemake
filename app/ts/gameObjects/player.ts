@@ -4,9 +4,9 @@
 
 module Player {
   export class playerFactory {
-    private game: Phaser.Game;
-    private player: Phaser.Sprite;
-    private cursors: Phaser.CursorKeys;
+     game: Phaser.Game;
+     player: Phaser.Sprite;
+     cursors: Phaser.CursorKeys;
 
     constructor(game: Phaser.Game) {
       this.game = game;
@@ -29,29 +29,28 @@ module Player {
 
       this.cursors = this.game.input.keyboard.createCursorKeys();
     }
-
-    movement(): void {
+    movement(playerObj: Phaser.Sprite): void {
       //  Reset the players velocity (movement)
-      this.player.body.velocity.x = 0;
+      playerObj.body.velocity.x = 0;
 
       if (this.cursors.left.isDown) {
         //  Move to the left
-        this.player.body.velocity.x = -150;
-        this.player.animations.play('left');
+        playerObj.body.velocity.x = -150;
+        playerObj.animations.play('left');
       }
       else if (this.cursors.right.isDown) {
         //  Move to the right
-        this.player.body.velocity.x = 150;
-        this.player.animations.play('right');
+        playerObj.body.velocity.x = 150;
+        playerObj.animations.play('right');
       }
       else {
         //  Stand still
-        this.player.animations.stop();
-        this.player.frame = 4;
+        playerObj.animations.stop();
+        playerObj.frame = 4;
       }
       //  Allow the player to jump if they are touching the ground.
-      if (this.cursors.up.isDown && this.player.body.onFloor()) {
-        this.player.body.velocity.y = -350;
+      if (this.cursors.up.isDown && this.player.body.touching.down) {
+        playerObj.body.velocity.y = -350;
       }
     }
   }
